@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Web Sockets Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    <div class="container" style="padding:20px;">
+        <div class="jumbotron">
+            <h1 class="display-4"> Send Message</h1>
+            <input style="margin-top:10px;" style="padding-top:10px;" type="text" class="form-control" id="name" placeholder="Name">
+            <textarea style="margin-top:10px;" style="padding-top:10px;" type="text" class="form-control" id="message" placeholder="Message"
+                rows="2"></textarea>
+            <button style="margin-top:10px;" id="send" class="btn btn-success float-right btn-lg">Send</button>
+        </div>
+        <div class="row">
+            <div class="col-sm" id="messages" style="padding-top:30px;">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
+        crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io('http://localhost:81');
+
+        $(() => {
+            getMessages();
+            $('#send').click(() => {
+                const message = {
+                    name: $('#name').val(),
+                    message: $('#message').val()
+                };
+                postMessage(message);
+            });
+            
+        })
+
+        socket.on('message', (message) => {
+            addMessages(message)
+        });
+
+        function addMessages(message) {
+            $('#messages').append(`<h4> ${message.name} </h4> <p> ${message.message} </p>`);
+        }
+
+        function getMessages() {
+            debugger;
+            $.get("/messages", (data) => {
+                debugger;
+                data.forEach(element => {
+                    addMessages(element);
+                });
+            });
+        }
+
+        function postMessage(message) {
+            $.post("/messages", message, (data) => {
+                debugger;
+            });
+        }
+    </script>
+</body>
+
+</html>
