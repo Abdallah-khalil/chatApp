@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Req, Post, Body, HttpStatus } from "@nestjs/common";
+import { Controller, Get, Res, Req, Post, Body, HttpStatus, Param } from "@nestjs/common";
 import { Response } from "express";
 import { Request } from "express-serve-static-core";
 import { MessageGateway } from "./socketIO.component";
@@ -27,9 +27,19 @@ export class HomeController {
         } catch (error) {
             res.status(HttpStatus.NOT_FOUND).send(error);
         }
-
-
     }
+
+    @Get("/messages/:name")
+    public async getMessagesByName( @Res() res: Response, @Param("name") name: string) {
+        try {
+            this.messageSvc.findAll(name).then((messages) => {
+                res.send(messages);
+            });
+        } catch (error) {
+            res.status(HttpStatus.NOT_FOUND).send(error);
+        }
+    }
+
 
     @Post("/messages")
     public sendMessage( @Body() newMessage: AddMessageDTO, @Res() res: Response) {

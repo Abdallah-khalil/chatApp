@@ -6,8 +6,12 @@ import { Message, AddMessageDTO } from "./message.schema";
 export class MessageService {
     constructor( @Inject('messageToken') private readonly messageModel: Model<Message>) { }
 
-    async findAll(): Promise<Message[]> {
-        return await this.messageModel.find().exec();
+    async findAll(name?: string): Promise<Message[]> {
+        if (name) {
+            return await this.messageModel.find({ name: name }).exec();
+        } else {
+            return await this.messageModel.find().exec();
+        }
     }
 
     async addMessage(newMessage: AddMessageDTO): Promise<Message> {
